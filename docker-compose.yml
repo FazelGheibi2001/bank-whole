@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    container_name: bank-db
+    environment:
+      POSTGRES_DB: bank
+      POSTGRES_USER: bank
+      POSTGRES_PASSWORD: bank
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./bank-master
+    container_name: bank-backend
+    environment:
+      - DATABASE_URL=postgres://bank:bank@db:5432/bank
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - ./bank-master:/app
+    command: /bin/sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"  # Updated command
+
+  frontend:
+    build:
+      context: ./bank-front-master
+    container_name: bank-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./bank-front-master:/app
+    command: /bin/sh -c "npm run start"  # Updated command
+
+volumes:
+  postgres_data:
