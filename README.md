@@ -114,6 +114,3 @@ Copy
 docker-compose exec backend bash
 python manage.py migrate
 This will allow you to run Django commands inside the backend container.
-
-License
-This project is licensed under the MIT License – see the LICENSE file for details.
